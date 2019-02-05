@@ -5,6 +5,7 @@ import numpy as np
 from scipy.sparse import spmatrix
 from numpy.random import RandomState
 from louvain.VertexPartition import MutableVertexPartition
+#import json
 
 def read_10x_mtx(
         path,
@@ -202,7 +203,7 @@ def filter_highly_variable_genes(data: AnnData):
         else:
             tdata.uns['workflow']=data.uns['workflow']
     tdata.uns['workflow']['step']=tdata.uns['workflow']['step']+1            
-    tdata.uns['workflow']['filter_highly_variable_genes']={'genes': data.var['highly_variable'],
+    tdata.uns['workflow']['filter_highly_variable_genes']={'genes': tdata.var['highly_variable'],
                                                            'workflow_step': data.uns['workflow']['step']}
 
     return tdata
