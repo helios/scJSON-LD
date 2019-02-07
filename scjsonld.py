@@ -19,9 +19,9 @@ def read_10x_mtx(
                            cache,
                            gex_only)
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['source']={'path': path,
+    data.uns['workflow']['steps']['source']={'path': path,
                                     'var_names': var_names,
                                     'workflow_step': data.uns['workflow']['step']}
     return data
@@ -44,9 +44,9 @@ def filter_cells(
                     inplace,
                     copy)
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['filter_cells']={'min_counts': min_counts,
+    data.uns['workflow']['steps']['filter_cells']={'min_counts': min_counts,
                                           'min_genes': min_genes,
                                           'max_counts': max_counts,
                                           'max_genes': min_genes,
@@ -64,9 +64,9 @@ def filter_genes(
             copy: bool = False,
         ):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['filter_genes']={'min_counts': min_counts,
+    data.uns['workflow']['steps']['filter_genes']={'min_counts': min_counts,
                                           'min_cells': min_cells,
                                           'max_counts': max_counts,
                                           'max_cells': max_cells,
@@ -87,11 +87,11 @@ def filter_obs_genes(
     print(tdata.uns['workflow'].keys())
     if 'workflow' not in tdata.uns:
         if 'workflow' not in data.uns:
-            tdata.uns['workflow']={'step':0}
+            tdata.uns['workflow']={'step':0, 'steps': {}}
         else:
             tdata.uns['workflow']=data.uns['workflow']
     tdata.uns['workflow']['step']=tdata.uns['workflow']['step']+1
-    tdata.uns['workflow']['filter_obs_genes']={'max_genes': max_genes,
+    tdata.uns['workflow']['steps']['filter_obs_genes']={'max_genes': max_genes,
                                                'workflow_step': tdata.uns['workflow']['step']}
     return tdata
 
@@ -103,11 +103,11 @@ def filter_obs_percent_mito(
     tdata = data[data.obs['percent_mito'] < max_percent_mito, :]
     if 'workflow' not in tdata.uns:
         if 'workflow' not in data.uns:
-            tdata.uns['workflow']={'step':0}
+            tdata.uns['workflow']={'step':0, 'steps': {}}
         else:
             tdata.uns['workflow']=data.uns['workflow']
     tdata.uns['workflow']['step']=tdata.uns['workflow']['step']+1           
-    tdata.uns['workflow']['filter_obs_percent_mito']={'max_percent_mito': max_percent_mito,
+    tdata.uns['workflow']['steps']['filter_obs_percent_mito']={'max_percent_mito': max_percent_mito,
                                                       'workflow_step': data.uns['workflow']['step']}
                                                       
     return tdata
@@ -122,9 +122,9 @@ def normalize_per_cell(
         use_rep=None,
         min_counts=1):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1       
-    data.uns['workflow']['normalize_per_cell']={'counts_per_cell_after': counts_per_cell_after,
+    data.uns['workflow']['steps']['normalize_per_cell']={'counts_per_cell_after': counts_per_cell_after,
                                                 'counts_per_cell':counts_per_cell,
                                                 'key_n_counts': key_n_counts,
                                                 'use_rep': use_rep,
@@ -149,9 +149,9 @@ def log1p(
         ):
     
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['log1p']={'executed': True,
+    data.uns['workflow']['steps']['log1p']={'executed': True,
                                    'chunked': chunked,
                                    'chunk_size': chunk_size,
                                    'workflow_step': data.uns['workflow']['step']}
@@ -170,9 +170,9 @@ def highly_variable_genes(
             inplace=True,
         ):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['high_variable_genes']={'min_disp': min_disp,
+    data.uns['workflow']['steps']['high_variable_genes']={'min_disp': min_disp,
                                                  'max_disp': max_disp,
                                                  'min_mean': min_mean,
                                                  'max_mean': max_mean,
@@ -199,11 +199,11 @@ def filter_highly_variable_genes(data: AnnData):
 
     if 'workflow' not in tdata.uns:
         if 'workflow' not in data.uns:
-            tdata.uns['workflow']={'step':0}
+            tdata.uns['workflow']={'step':0, 'steps': {}}
         else:
             tdata.uns['workflow']=data.uns['workflow']
     tdata.uns['workflow']['step']=tdata.uns['workflow']['step']+1            
-    tdata.uns['workflow']['filter_highly_variable_genes']={'genes': tdata.var['highly_variable'],
+    tdata.uns['workflow']['steps']['filter_highly_variable_genes']={'genes': tdata.var['highly_variable'],
                                                            'workflow_step': data.uns['workflow']['step']}
 
     return tdata
@@ -211,18 +211,18 @@ def filter_highly_variable_genes(data: AnnData):
 
 def regress_out(data, keys, n_jobs=None, copy=False):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['regress_out']={'keys': keys,
+    data.uns['workflow']['steps']['regress_out']={'keys': keys,
                                          'workflow_step': data.uns['workflow']['step']}
                                          
     sc.pp.regress_out(data, ['n_counts', 'percent_mito'], n_jobs, copy)
 
 def scale(data, zero_center=True, max_value=None, copy=False):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['scale']={'zero_center': zero_center,
+    data.uns['workflow']['steps']['scale']={'zero_center': zero_center,
                                    'max_value': max_value,
                                    'workflow_step': data.uns['workflow']['step']}
                                    
@@ -240,9 +240,9 @@ def pca(data: Union[AnnData, np.ndarray, spmatrix],
         chunked: bool = False,
         chunk_size: Optional[int] = None):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['pca']={'n_comps': n_comps,
+    data.uns['workflow']['steps']['pca']={'n_comps': n_comps,
                                  'zero_center': zero_center,
                                  'svd_solver': svd_solver,
                                  'random_state': random_state,
@@ -277,9 +277,9 @@ def neighbors(data: AnnData,
               metric_kwds: Mapping[str, Any] = {},
               copy: bool = False):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['neighbors']={'n_neighbors': n_neighbors,
+    data.uns['workflow']['steps']['neighbors']={'n_neighbors': n_neighbors,
                                        'n_pcs': n_pcs,
                                        'use_rep': use_rep,
                                        'knn': knn,
@@ -315,9 +315,9 @@ def umap(data,
                 b=None,
                 copy=False):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['umap']={'min_dist':min_dist,
+    data.uns['workflow']['steps']['umap']={'min_dist':min_dist,
                                   'spread': spread,
                                   'n_components': n_components,
                                   'maxiter': maxiter,
@@ -347,9 +347,9 @@ def louvain(
             partition_kwargs: Optional[Mapping[str, Any]]=None,
             copy: bool = False,):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['louvain']={'resolution': resolution,
+    data.uns['workflow']['steps']['louvain']={'resolution': resolution,
                                      'random_state': random_state,
                                      'restrict_to': restrict_to,
                                      'key_added': key_added,
@@ -388,9 +388,9 @@ def rank_genes_groups(
                 corr_method='benjamini-hochberg',
                 **kwds):
     if 'workflow' not in data.uns:
-        data.uns['workflow']={'step':0}
+        data.uns['workflow']={'step':0, 'steps': {}}
     data.uns['workflow']['step']=data.uns['workflow']['step']+1
-    data.uns['workflow']['rank_genes_groups']={'groupby': groupby,
+    data.uns['workflow']['steps']['rank_genes_groups']={'groupby': groupby,
                                                'use_raw': use_raw,
                                                'groups': groups,
                                                'reference': reference,
